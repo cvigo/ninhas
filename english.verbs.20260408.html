@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>English Exam - Landscape Format</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .hoja {
+            background-color: white;
+            width: 297mm;
+            height: 210mm;
+            padding: 15mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        h2 {
+            color: #2980b9;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 10px;
+            margin: 0 0 15px 0;
+        }
+        .instrucciones {
+            background-color: #eef7fa;
+            border-left: 5px solid #2980b9;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .ejercicio-num {
+            color: #2980b9;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+            word-wrap: break-word;
+            font-size: 0.85em;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #2c3e50;
+        }
+        /* Ajuste de anchos de columna */
+        .col-verb { width: 12%; }
+        .col-past { width: 12%; }
+        .col-part { width: 13%; }
+        .col-mean { width: 28%; }
+        .col-ex   { width: 35%; }
+
+        .dashed-line {
+            border-top: 2px dashed #ccc;
+            margin: 20px 0;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body { background-color: white; padding: 0; }
+            .hoja { box-shadow: none; width: 100%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hoja">
+    <div class="instrucciones">
+        <strong>INSTRUCTIONS:</strong> Complete the table. For each row, only one piece of information is provided. You must fill in the rest. 
+        <strong>Important:</strong> The "Example" column must be a complete sentence using the verb in any tense you choose.
+    </div>
+
+    <div class="ejercicio">
+        <span class="ejercicio-num">1.</span> Complete the missing information:
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-verb">VERB (Infinitive)</th>
+                    <th class="col-past">PAST TENSE</th>
+                    <th class="col-part">HAVE / HAS + PART.</th>
+                    <th class="col-mean">MEANING</th>
+                    <th class="col-ex">EXAMPLE SENTENCE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>To brush</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>cut</td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td>prevented</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td>To do something with an object for a purpose.</td><td></td></tr>
+                <tr><td>To change</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>went</td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td>eaten</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td>To take liquids into your mouth and swallow them.</td><td></td></tr>
+                <tr><td>To volunteer</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td>woken up</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td>To find an answer.</td><td></td></tr>
+                <tr><td>To give</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>beat</td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="hoja page-break">
+    <h2>Solucionario (Teacher's Copy)</h2>
+    <div class="instrucciones">
+        Respuestas sugeridas para la evaluación de 6º de Primaria.
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-verb">INFINITIVE</th>
+                <th class="col-past">PAST TENSE</th>
+                <th class="col-part">PAST PART.</th>
+                <th class="col-mean">MEANING</th>
+                <th class="col-ex">EXAMPLE (Suggested)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>To brush</strong></td><td>brushed</td><td>brushed</td><td>To clear something with a brush.</td><td>I brush my teeth every day.</td></tr>
+            <tr><td>To cut</td><td><strong>cut</strong></td><td>cut</td><td>To divide something with a sharp tool.</td><td>He cut the paper in class.</td></tr>
+            <tr><td>To prevent</td><td>prevented</td><td><strong>prevented</strong></td><td>To stop something from happening.</td><td>We prevent forest fires.</td></tr>
+            <tr><td>To use</td><td>used</td><td>used</td><td><strong>To do something with an object...</strong></td><td>She used her phone.</td></tr>
+            <tr><td><strong>To change</strong></td><td>changed</td><td>changed</td><td>To make something different.</td><td>You will change your mind.</td></tr>
+            <tr><td>To go</td><td><strong>went</strong></td><td>gone</td><td>To move from one place to another.</td><td>They went to the park.</td></tr>
+            <tr><td>To eat</td><td>ate</td><td><strong>eaten</strong></td><td>To put food in your mouth.</td><td>I have eaten an apple.</td></tr>
+            <tr><td>To drink</td><td>drank</td><td>drunk</td><td><strong>To take liquids into your mouth...</strong></td><td>He drank some water.</td></tr>
+            <tr><td><strong>To volunteer</strong></td><td>volunteered</td><td>volunteered</td><td>To work for free.</td><td>I volunteered at the shelter.</td></tr>
+            <tr><td>To wake up</td><td>woke up</td><td><strong>woken up</strong></td><td>To stop sleeping.</td><td>She has just woken up.</td></tr>
+            <tr><td>To solve</td><td>solved</td><td>solved</td><td><strong>To find an answer.</strong></td><td>They solved the mystery.</td></tr>
+            <tr><td><strong>To give</strong></td><td>gave</td><td>given</td><td>To hand something to someone.</td><td>My dad gave me ten dollars.</td></tr>
+            <tr><td>To beat</td><td><strong>beat</strong></td><td>beaten</td><td>To do better than another in a game.</td><td>I beat my brother at chess.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
