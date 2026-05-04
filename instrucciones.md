@@ -54,6 +54,8 @@ Actúa como un profesor en Madrid especializado en alumnos nacidos en el año 20
     </script>
     ```
 
+    Ten en cuenta que el símbolo del euro (€) no es un carácter matemático estándar, por lo que debes envolverlo del comando \text{} de LaTeX, así: $650 \text{ €}$. Esto le indica a MathJax que debe tratar ese carácter como texto normal dentro de la fórmula.
+
     Diseño CSS: * Usa una fuente limpia como 'Segoe UI' o Arial.
 
     Crea un contenedor de clase .hoja con fondo blanco, sombra suave (box-shadow) y un ancho máximo de 800px para que parezca un folio.
