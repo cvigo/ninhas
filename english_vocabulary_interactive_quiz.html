@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Vocabulary Unit 1 Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+        }
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        @keyframes pulse-success {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-success {
+            animation: pulse-success 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 bg-slate-50">
+
+    <header class="bg-indigo-600 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 p-2 rounded-xl text-2xl">📚</div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Unit 1 Vocabulary Practice</h1>
+                    <p class="text-indigo-200 text-xs sm:text-sm">Household Tasks • Free-Time Activities • Personality</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4 bg-indigo-700/60 px-4 py-2 rounded-xl border border-indigo-500/30">
+                <div class="text-center">
+                    <span class="text-xs text-indigo-200 uppercase tracking-wider block font-semibold">Score</span>
+                    <span id="currentScore" class="text-xl font-extrabold text-amber-300">0</span>
+                </div>
+                <div class="h-8 w-px bg-indigo-500/40"></div>
+                <div class="text-center">
+                    <span class="text-xs text-indigo-200 uppercase tracking-wider block font-semibold">Streak</span>
+                    <span id="currentStreak" class="text-xl font-extrabold text-emerald-300">🔥 0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
+        
+        <!-- Controls & Category Selection -->
+        <section class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200/80 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Practice Mode Selector -->
+                <div class="w-full md:w-auto">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Practice Mode</label>
+                    <div class="grid grid-cols-3 gap-1 p-1 bg-slate-100 rounded-xl text-xs sm:text-sm font-semibold">
+                        <button onclick="setGameMode('quiz')" id="modeQuiz" class="py-2 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-sm">
+                            Multiple Choice
+                        </button>
+                        <button onclick="setGameMode('fill')" id="modeFill" class="py-2 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                            Fill in Blanks
+                        </button>
+                        <button onclick="setGameMode('match')" id="modeMatch" class="py-2 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                            Matching Game
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Filter Selector -->
+                <div class="w-full md:w-auto">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Topic Category</label>
+                    <select id="categorySelect" onchange="changeCategory()" class="w-full md:w-64 bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="all">🌟 All Unit 1 Topics</option>
+                        <option value="tasks">🧹 Household Tasks</option>
+                        <option value="activities">⚽ Free-Time Activities</option>
+                        <option value="personality">😊 Personality Adjectives</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz & Fill-in Container -->
+        <div id="quizContainer" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8 transition-all">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-500 mb-2">
+                    <span id="questionProgressText">Question 1 of 10</span>
+                    <span id="categoryBadge" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">All Topics</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Multiple Choice & Fill-in View -->
+            <div id="activeQuestionCard">
+                <div class="min-h-[100px] flex flex-col justify-center mb-6">
+                    <span id="questionPrompt" class="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-1">Select the correct answer</span>
+                    <h2 id="questionText" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                        Loading question...
+                    </h2>
+                </div>
+
+                <!-- Multiple Choice Answers Grid -->
+                <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    <!-- Options populated by JS -->
+                </div>
+
+                <!-- Fill in the Blank Input -->
+                <div id="fillInInputGroup" class="hidden mb-6">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="blankAnswerInput" placeholder="Type your answer here..." autocomplete="off"
+                               class="flex-1 bg-slate-50 border-2 border-slate-300 focus:border-indigo-500 rounded-xl px-4 py-3 text-lg font-medium focus:outline-none transition">
+                        <button onclick="checkFillAnswer()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition shadow-md">
+                            Check Answer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback Message Container -->
+                <div id="feedbackContainer" class="hidden p-4 rounded-xl mb-6 font-medium text-sm flex items-start gap-3">
+                    <span id="feedbackIcon" class="text-xl"></span>
+                    <div>
+                        <div id="feedbackTitle" class="font-bold"></div>
+                        <div id="feedbackDetail" class="text-xs sm:text-sm mt-0.5"></div>
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="flex justify-end">
+                    <button id="nextBtn" onclick="nextQuestion()" class="hidden bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3 rounded-xl transition flex items-center gap-2">
+                        <span>Next Question</span>
+                        <span>➔</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Game Container -->
+        <div id="matchingContainer" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Vocabulary Matching Challenge</h2>
+                    <p class="text-sm text-slate-500">Match each vocabulary term on the left with its definition on the right!</p>
+                </div>
+                <button onclick="setupMatchingGame()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg transition">
+                    🔄 Shuffle Cards
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="matchingBoard">
+                <!-- Matching items generated dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Completion Modal -->
+    <div id="celebrationModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl transform transition-all border border-slate-100">
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Awesome Job!</h2>
+            <p class="text-sm text-slate-500 mb-6">You completed the Unit 1 practice module!</p>
+
+            <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100">
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Final Score</div>
+                <div id="finalScoreText" class="text-4xl font-black text-indigo-600">0 / 10</div>
+                <div id="accuracyBadge" class="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full mt-2">
+                    100% Accuracy
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button onclick="restartPractice()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
+                    Practice Again
+                </button>
+                <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-6 rounded-xl transition">
+                    Review Questions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Unit 1 Vocabulary Database ---
+        const vocabularyData = [
+            // Household Tasks
+            { id: 1, term: "Clean the bathroom", category: "tasks", hint: "Washing the tiles, mirror, and toilet in the washroom", distractor: ["Tidy my room", "Do the laundry", "Wash up"] },
+            { id: 2, term: "Clean the windows", category: "tasks", hint: "Making glass panes clear and free of smudge marks", distractor: ["Vacuum the floor", "Do the ironing", "Make the bed"] },
+            { id: 3, term: "Do the ironing", category: "tasks", hint: "Using a hot appliance to remove wrinkles from clothes", distractor: ["Do the laundry", "Prepare food", "Shop for food"] },
+            { id: 4, term: "Do the laundry", category: "tasks", hint: "Washing clothes, socks, and towels in the machine", distractor: ["Do the ironing", "Wash up", "Vacuum the floor"] },
+            { id: 5, term: "Load/unload the dishwasher", category: "tasks", hint: "Putting dirty plates in or taking clean dishes out of the machine", distractor: ["Wash up", "Prepare food", "Clean the bathroom"] },
+            { id: 6, term: "Make my own breakfast/lunch", category: "tasks", hint: "Preparing your own morning or midday meal", distractor: ["Prepare food", "Shop for food", "Tidy my room"] },
+            { id: 7, term: "Make the bed", category: "tasks", hint: "Arranging sheets, blankets, and pillows neatly after sleeping", distractor: ["Tidy my room", "Do the laundry", "Vacuum the floor"] },
+            { id: 8, term: "Prepare food", category: "tasks", hint: "Chopping, cooking, and making ingredients ready to eat", distractor: ["Make the bed", "Shop for food", "Wash up"] },
+            { id: 9, term: "Shop for food", category: "tasks", hint: "Buying groceries and food items from the supermarket", distractor: ["Prepare food", "Take the rubbish out", "Vacuum the floor"] },
+            { id: 10, term: "Take the rubbish out", category: "tasks", hint: "Carrying full trash bags outside to the bin", distractor: ["Clean the windows", "Do the laundry", "Tidy my room"] },
+            { id: 11, term: "Tidy my room", category: "tasks", hint: "Putting clothes, books, and items back in their places", distractor: ["Make the bed", "Clean the bathroom", "Vacuum the floor"] },
+            { id: 12, term: "Vacuum the floor", category: "tasks", hint: "Using an electric machine to suck up dust from carpets", distractor: ["Clean the windows", "Do the ironing", "Take the rubbish out"] },
+            { id: 13, term: "Wash up", category: "tasks", hint: "Washing plates, cups, and cutlery by hand with soap and water", distractor: ["Load/unload the dishwasher", "Do the laundry", "Clean the bathroom"] },
+
+            // Free-Time Activities
+            { id: 14, term: "Athletics", category: "activities", hint: "Sports events like track running, long jump, and high jump", distractor: ["Gymnastic", "Fitness training", "Bowling"] },
+            { id: 15, term: "Bowling", category: "activities", hint: "Rolling a heavy ball down a lane to knock over ten pins", distractor: ["Chess", "Hockey", "Handball"] },
+            { id: 16, term: "Chess", category: "activities", hint: "A strategic board game played with kings, queens, and pawns", distractor: ["Bowling", "Judo", "Karate"] },
+            { id: 17, term: "Climbing", category: "activities", hint: "Scaling steep rocks or indoor artificial climbing walls", distractor: ["Hiking", "Surfing", "Athletics"] },
+            { id: 18, term: "Fitness training", category: "activities", hint: "Exercising at the gym to improve physical health and strength", distractor: ["Gymnastic", "Athletics", "Karate"] },
+            { id: 19, term: "Gymnastic", category: "activities", hint: "Exercises showing agility, balance, flips, and flexibility", distractor: ["Fitness training", "Athletics", "Judo"] },
+            { id: 20, term: "Handball", category: "activities", hint: "A team sport where players pass a ball with hands to score goals", distractor: ["Hockey", "Bowling", "Chess"] },
+            { id: 21, term: "Hiking", category: "activities", hint: "Taking long outdoor walks in the mountains or countryside", distractor: ["Climbing", "Surfing", "Athletics"] },
+            { id: 22, term: "Hockey", category: "activities", hint: "A sport played with sticks to hit a puck or ball into a net", distractor: ["Handball", "Bowling", "Chess"] },
+            { id: 23, term: "Judo", category: "activities", hint: "A modern martial art focusing on throws and takedowns", distractor: ["Karate", "Gymnastic", "Climbing"] },
+            { id: 24, term: "Karate", category: "activities", hint: "An Asian martial art focused on strikes, kicks, and punches", distractor: ["Judo", "Fitness training", "Athletics"] },
+            { id: 25, term: "Surfing", category: "activities", hint: "Riding ocean waves while standing upright on a surfboard", distractor: ["Hiking", "Climbing", "Bowling"] },
+
+            // Personality Adjectives
+            { id: 26, term: "Cheerful", category: "personality", hint: "Noticeably happy, optimistic, and smiling frequently", distractor: ["Confident", "Funny", "Kind"] },
+            { id: 27, term: "Confident", category: "personality", hint: "Believing in yourself and your abilities without feeling shy", distractor: ["Cheerful", "Generous", "Honest"] },
+            { id: 28, term: "Funny", category: "personality", hint: "Makes people laugh and tells good jokes", distractor: ["Interesting", "Cheerful", "Loyal"] },
+            { id: 29, term: "Generous", category: "personality", hint: "Willing to share money, time, or things with others", distractor: ["Helpful", "Kind", "Honest"] },
+            { id: 30, term: "Helpful", category: "personality", hint: "Always ready to assist or support other people", distractor: ["Generous", "Kind", "Confident"] },
+            { id: 31, term: "Kind", category: "personality", hint: "Friendly, gentle, caring, and considerate towards others", distractor: ["Helpful", "Cheerful", "Loyal"] },
+            { id: 32, term: "Honest", category: "personality", hint: "Always telling the truth and never lying or cheating", distractor: ["Loyal", "Confident", "Interesting"] },
+            { id: 33, term: "Interesting", category: "personality", hint: "Attracting curiosity and holding attention with cool ideas", distractor: ["Funny", "Cheerful", "Generous"] },
+            { id: 34, term: "Loyal", category: "personality", hint: "Remaining faithful and standing by your friends at all times", distractor: ["Honest", "Kind", "Helpful"] }
+        ];
+
+        // --- State Management ---
+        let currentCategory = "all";
+        let currentMode = "quiz"; // quiz, fill, match
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let isAnswered = false;
+
+        // Matching Mode State
+        let selectedTermCard = null;
+        let selectedHintCard = null;
+        let matchedCount = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initGame();
+        });
+
+        function initGame() {
+            score = 0;
+            streak = 0;
+            updateHeader();
+            loadCategoryQuestions();
+            
+            if (currentMode === 'match') {
+                setupMatchingGame();
+            } else {
+                renderCurrentQuestion();
+            }
+        }
+
+        function setGameMode(mode) {
+            currentMode = mode;
+            
+            // UI Button toggle
+            document.getElementById('modeQuiz').className = mode === 'quiz' 
+                ? 'py-2 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-sm' 
+                : 'py-2 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('modeFill').className = mode === 'fill' 
+                ? 'py-2 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-sm' 
+                : 'py-2 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('modeMatch').className = mode === 'match' 
+                ? 'py-2 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-sm' 
+                : 'py-2 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+
+            if (mode === 'match') {
+                document.getElementById('quizContainer').classList.add('hidden');
+                document.getElementById('matchingContainer').classList.remove('hidden');
+                setupMatchingGame();
+            } else {
+                document.getElementById('matchingContainer').classList.add('hidden');
+                document.getElementById('quizContainer').classList.remove('hidden');
+                initGame();
+            }
+        }
+
+        function changeCategory() {
+            currentCategory = document.getElementById('categorySelect').value;
+            initGame();
+        }
+
+        function loadCategoryQuestions() {
+            let filtered = vocabularyData;
+            if (currentCategory !== 'all') {
+                filtered = vocabularyData.filter(item => item.category === currentCategory);
+            }
+            // Shuffle dataset
+            currentQuestions = [...filtered].sort(() => Math.random() - 0.5).slice(0, 10);
+            currentIndex = 0;
+        }
+
+        function updateHeader() {
+            document.getElementById('currentScore').innerText = score;
+            document.getElementById('currentStreak').innerText = `🔥 ${streak}`;
+        }
+
+        function renderCurrentQuestion() {
+            if (currentIndex >= currentQuestions.length) {
+                showCompletionModal();
+                return;
+            }
+
+            isAnswered = false;
+            const q = currentQuestions[currentIndex];
+            
+            // Progress Bar & Labels
+            document.getElementById('questionProgressText').innerText = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+            document.getElementById('progressBar').style.width = `${((currentIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            const categoryNames = {
+                all: "All Topics",
+                tasks: "Household Tasks",
+                activities: "Free-Time Activities",
+                personality: "Personality Adjectives"
+            };
+            document.getElementById('categoryBadge').innerText = categoryNames[q.category] || "Unit 1";
+
+            // Hide Feedback & Next Button
+            document.getElementById('feedbackContainer').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            if (currentMode === 'quiz') {
+                renderMultipleChoice(q);
+            } else if (currentMode === 'fill') {
+                renderFillInBlank(q);
+            }
+        }
+
+        function renderMultipleChoice(q) {
+            document.getElementById('fillInInputGroup').classList.add('hidden');
+            document.getElementById('quizOptionsGrid').classList.remove('hidden');
+            
+            document.getElementById('questionPrompt').innerText = "Which vocabulary term matches this definition?";
+            document.getElementById('questionText').innerText = `"${q.hint}"`;
+
+            // Prepare choices (1 correct, 3 distractors)
+            let choices = [q.term, ...q.distractor].sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('quizOptionsGrid');
+            grid.innerHTML = '';
+
+            choices.forEach((choice) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt p-4 text-left font-semibold text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-300 border-2 border-slate-200 rounded-xl transition duration-150 flex justify-between items-center";
+                btn.innerHTML = `<span>${choice}</span><span class="opt-icon text-slate-300">⚪</span>`;
+                btn.onclick = () => selectQuizAnswer(btn, choice, q.term);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedBtn, choice, correctTerm) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const buttons = document.querySelectorAll('.quiz-opt');
+            buttons.forEach(btn => btn.disabled = true);
+
+            const isCorrect = choice === correctTerm;
+
+            if (isCorrect) {
+                selectedBtn.className = "quiz-opt p-4 text-left font-bold text-emerald-800 bg-emerald-50 border-2 border-emerald-500 rounded-xl flex justify-between items-center animate-success";
+                selectedBtn.querySelector('.opt-icon').innerText = "✅";
+                handleRightAnswer();
+            } else {
+                selectedBtn.className = "quiz-opt p-4 text-left font-bold text-rose-800 bg-rose-50 border-2 border-rose-500 rounded-xl flex justify-between items-center";
+                selectedBtn.querySelector('.opt-icon').innerText = "❌";
+
+                // Highlight correct
+                buttons.forEach(btn => {
+                    if (btn.innerText.includes(correctTerm)) {
+                        btn.className = "quiz-opt p-4 text-left font-bold text-emerald-800 bg-emerald-50 border-2 border-emerald-400 rounded-xl flex justify-between items-center";
+                        btn.querySelector('.opt-icon').innerText = "✅";
+                    }
+                });
+                handleWrongAnswer(correctTerm);
+            }
+
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function renderFillInBlank(q) {
+            document.getElementById('quizOptionsGrid').classList.add('hidden');
+            document.getElementById('fillInInputGroup').classList.remove('hidden');
+
+            document.getElementById('questionPrompt').innerText = "Complete the term for this description:";
+            document.getElementById('questionText').innerText = `"${q.hint}"`;
+
+            const input = document.getElementById('blankAnswerInput');
+            input.value = '';
+            input.disabled = false;
+            input.focus();
+            
+            // Allow press Enter to submit
+            input.onkeyup = (e) => {
+                if (e.key === 'Enter') checkFillAnswer();
+            };
+        }
+
+        function checkFillAnswer() {
+            if (isAnswered) return;
+            
+            const q = currentQuestions[currentIndex];
+            const input = document.getElementById('blankAnswerInput');
+            const userVal = input.value.trim().toLowerCase();
+            const targetVal = q.term.toLowerCase();
+
+            if (!userVal) return;
+
+            isAnswered = true;
+            input.disabled = true;
+
+            if (userVal === targetVal) {
+                input.className = "flex-1 bg-emerald-50 border-2 border-emerald-500 rounded-xl px-4 py-3 text-lg font-bold text-emerald-800 focus:outline-none";
+                handleRightAnswer();
+            } else {
+                input.className = "flex-1 bg-rose-50 border-2 border-rose-500 rounded-xl px-4 py-3 text-lg font-bold text-rose-800 focus:outline-none";
+                handleWrongAnswer(q.term);
+            }
+
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function handleRightAnswer() {
+            score += 10;
+            streak += 1;
+            updateHeader();
+
+            showFeedback(true, "Correct! Great job!", "You've earned +10 points.");
+        }
+
+        function handleWrongAnswer(correctTerm) {
+            streak = 0;
+            updateHeader();
+
+            showFeedback(false, "Not quite right!", `The correct answer is: <strong>${correctTerm}</strong>`);
+        }
+
+        function showFeedback(isSuccess, title, detail) {
+            const container = document.getElementById('feedbackContainer');
+            const icon = document.getElementById('feedbackIcon');
+            const titleEl = document.getElementById('feedbackTitle');
+            const detailEl = document.getElementById('feedbackDetail');
+
+            container.classList.remove('hidden');
+
+            if (isSuccess) {
+                container.className = "p-4 rounded-xl mb-6 font-medium text-sm flex items-start gap-3 bg-emerald-50 text-emerald-900 border border-emerald-200";
+                icon.innerText = "🎉";
+            } else {
+                container.className = "p-4 rounded-xl mb-6 font-medium text-sm flex items-start gap-3 bg-rose-50 text-rose-900 border border-rose-200";
+                icon.innerText = "💡";
+            }
+
+            titleEl.innerText = title;
+            detailEl.innerHTML = detail;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            renderCurrentQuestion();
+        }
+
+        function setupMatchingGame() {
+            let filtered = vocabularyData;
+            if (currentCategory !== 'all') {
+                filtered = vocabularyData.filter(item => item.category === currentCategory);
+            }
+
+            const items = [...filtered].sort(() => Math.random() - 0.5).slice(0, 5);
+            
+            let terms = items.map(i => ({ id: i.id, text: i.term }));
+            let hints = items.map(i => ({ id: i.id, text: i.hint }));
+
+            terms.sort(() => Math.random() - 0.5);
+            hints.sort(() => Math.random() - 0.5);
+
+            selectedTermCard = null;
+            selectedHintCard = null;
+            matchedCount = 0;
+
+            const board = document.getElementById('matchingBoard');
+            board.innerHTML = `
+                <div class="space-y-3" id="termsColumn"></div>
+                <div class="space-y-3" id="hintsColumn"></div>
+            `;
+
+            const termsCol = document.getElementById('termsColumn');
+            const hintsCol = document.getElementById('hintsColumn');
+
+            terms.forEach(t => {
+                const el = document.createElement('div');
+                el.dataset.id = t.id;
+                el.className = "match-card p-4 rounded-xl bg-slate-50 border-2 border-slate-200 font-bold text-slate-700 cursor-pointer transition text-center shadow-sm hover:border-indigo-300";
+                el.innerText = t.text;
+                el.onclick = () => selectMatchItem(el, 'term');
+                termsCol.appendChild(el);
+            });
+
+            hints.forEach(h => {
+                const el = document.createElement('div');
+                el.dataset.id = h.id;
+                el.className = "match-card p-4 rounded-xl bg-slate-50 border-2 border-slate-200 text-xs sm:text-sm font-medium text-slate-600 cursor-pointer transition text-center shadow-sm hover:border-indigo-300";
+                el.innerText = h.text;
+                el.onclick = () => selectMatchItem(el, 'hint');
+                hintsCol.appendChild(el);
+            });
+        }
+
+        function selectMatchItem(el, type) {
+            if (el.classList.contains('matched')) return;
+
+            if (type === 'term') {
+                if (selectedTermCard) selectedTermCard.classList.remove('border-indigo-600', 'bg-indigo-50');
+                selectedTermCard = el;
+                el.classList.add('border-indigo-600', 'bg-indigo-50');
+            } else {
+                if (selectedHintCard) selectedHintCard.classList.remove('border-indigo-600', 'bg-indigo-50');
+                selectedHintCard = el;
+                el.classList.add('border-indigo-600', 'bg-indigo-50');
+            }
+
+            if (selectedTermCard && selectedHintCard) {
+                if (selectedTermCard.dataset.id === selectedHintCard.dataset.id) {
+                    // Match Success
+                    selectedTermCard.className = "p-4 rounded-xl bg-emerald-100 border-2 border-emerald-500 font-bold text-emerald-800 text-center matched opacity-60";
+                    selectedHintCard.className = "p-4 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-xs sm:text-sm font-medium text-emerald-800 text-center matched opacity-60";
+
+                    score += 15;
+                    streak += 1;
+                    matchedCount++;
+                    updateHeader();
+
+                    selectedTermCard = null;
+                    selectedHintCard = null;
+
+                    if (matchedCount === 5) {
+                        setTimeout(() => {
+                            showCompletionModal();
+                        }, 500);
+                    }
+                } else {
+                    // Match Fail
+                    const t = selectedTermCard;
+                    const h = selectedHintCard;
+                    t.classList.add('border-rose-500', 'bg-rose-50');
+                    h.classList.add('border-rose-500', 'bg-rose-50');
+
+                    setTimeout(() => {
+                        t.classList.remove('border-rose-500', 'bg-rose-50', 'border-indigo-600', 'bg-indigo-50');
+                        h.classList.remove('border-rose-500', 'bg-rose-50', 'border-indigo-600', 'bg-indigo-50');
+                    }, 600);
+
+                    selectedTermCard = null;
+                    selectedHintCard = null;
+                    streak = 0;
+                    updateHeader();
+                }
+            }
+        }
+
+        function showCompletionModal() {
+            document.getElementById('celebrationModal').classList.remove('hidden');
+            document.getElementById('finalScoreText').innerText = `${score} pts`;
+            
+            const accuracy = Math.min(100, Math.round((score / 100) * 100));
+            document.getElementById('accuracyBadge').innerText = `${accuracy}% Final Score Rating`;
+        }
+
+        function closeModal() {
+            document.getElementById('celebrationModal').classList.add('hidden');
+        }
+
+        function restartPractice() {
+            closeModal();
+            initGame();
+        }
+    </script>
+</body>
+</html>
